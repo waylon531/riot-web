@@ -39,6 +39,8 @@ const { migrateFromOldOrigin } = require('./originMigrator');
 
 const windowStateKeeper = require('electron-window-state');
 const Store = require('electron-store');
+const seshat = require('seshat-node');
+const makeDir = require('make-dir');
 
 if (argv["help"]) {
     console.log("Options:");
@@ -82,7 +84,11 @@ try {
     // Could not load local config, this is expected in most cases.
 }
 
+
+const eventStorePath = path.join(app.getPath('userData'), 'events-store');
 const store = new Store({ name: "electron-config" });
+
+let eventStore = null;
 
 let mainWindow = null;
 global.appQuitting = false;
@@ -200,6 +206,40 @@ ipcMain.on('ipcCall', async function(ev, payload) {
         case 'getConfig':
             ret = vectorConfig;
             break;
+        case 'initEventIndex':
+            console.log("HELLLO INIT EVENT INDEXER");
+            console.log(args[0]);
+            // TODO this may be called multiple times with differing users
+            // remember the last user and init a new store if they differ
+            if (args[0] && eventStore == null) {
+              let p = path.normalize(path.join(eventStorePath, args[0]));
+              await makeDir(p);
+
+              eventStore = new seshat(p);
+
+              console.log("Initialized event store");
+              console.log(eventStore);
+            }
+            break;
+        case 'addEventToIndex':
+            // TODO check that we have the event store initialized.
+            // TODO get the profile as well
+            // TODO catch errors
+            try {
+                eventStore.addEvent(args[0]);
+                // console.log("Added event to the indexer", args[0]);
+            }
+            catch (e) {
+                console.log("Not adding event to store", e);
+            }
+            // TODO don't commit on every addition.
+            await eventStore.commit();
+            break;
+        case 'searchEventIndex':
+            console.log("Got search request", args[0]);
+            ret = await eventStore.search(args[0]);
+            break;
+
         default:
             mainWindow.webContents.send('ipcReply', {
                 id: payload.id,
