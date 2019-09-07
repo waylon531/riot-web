@@ -283,4 +283,19 @@ export default class ElectronPlatform extends VectorBasePlatform {
             callbacks.resolve(payload.reply);
         }
     }
+
+    initEventIndex(user_id: string) {
+        return this._ipcCall('initEventIndex', user_id);
+    }
+
+    addEventToIndex(ev: object) {
+        return this._ipcCall('addEventToIndex', ev);
+    }
+
+    async searchEventIndex(term: string): Promise<{}> {
+        console.log("Seshat: sending search request");
+        let search_result = await this._ipcCall('searchEventIndex', term);
+        console.log("Got search result:", search_result);
+        return search_result;
+    }
 }
