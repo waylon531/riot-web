@@ -230,7 +230,7 @@ ipcMain.on('ipcCall', async function(ev, payload) {
                 // console.log("Added event to the indexer", args[0]);
             }
             catch (e) {
-                console.log("Not adding event to store", e);
+                console.log("Not adding event to store", e, args[0]);
             }
             // TODO don't commit on every addition.
             await eventStore.commit();
@@ -238,6 +238,22 @@ ipcMain.on('ipcCall', async function(ev, payload) {
         case 'searchEventIndex':
             console.log("Got search request", args[0]);
             ret = await eventStore.search(args[0]);
+            break;
+
+        case 'addBacklogEvents':
+            ret = await eventStore.addBacklogEvents(args[0], args[1], args[2]);
+            break;
+
+        case 'removeBacklogCheckpoint':
+            ret = await eventStore.removeBacklogCheckpoint(args[0]);
+            break;
+
+        case 'addBacklogCheckpoint':
+            ret = await eventStore.addBacklogCheckpoint(args[0]);
+            break;
+
+        case 'loadCheckpoints':
+            ret = await eventStore.loadCheckpoints();
             break;
 
         default:

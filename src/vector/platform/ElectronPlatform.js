@@ -284,18 +284,32 @@ export default class ElectronPlatform extends VectorBasePlatform {
         }
     }
 
-    initEventIndex(user_id: string) {
+    async initEventIndex(user_id: string) {
         return this._ipcCall('initEventIndex', user_id);
     }
 
-    addEventToIndex(ev: object) {
+    async addEventToIndex(ev: object) {
         return this._ipcCall('addEventToIndex', ev);
     }
 
     async searchEventIndex(term: string): Promise<{}> {
-        console.log("Seshat: sending search request");
-        let search_result = await this._ipcCall('searchEventIndex', term);
-        console.log("Got search result:", search_result);
-        return search_result;
+        return this._ipcCall('searchEventIndex', term);
+    }
+
+    async addBacklogEvents(events: string, checkpoint = null, oldCheckpoint = null): Promise<{}> {
+        console.log("Adding events", events, checkpoint, oldCheckpoint);
+        return this._ipcCall('addBacklogEvents', events, checkpoint, oldCheckpoint);
+    }
+
+    async addBacklogCheckpoint(checkpoint: {}): Promise<{}> {
+        return this._ipcCall('addBacklogCheckpoint', checkpoint);
+    }
+
+    async removeBacklogCheckpoint(checkpoint: {}): Promise<{}> {
+        return this._ipcCall('removeBacklogCheckpoint', checkpoint);
+    }
+
+    async loadCheckpoints(checkpoint: {}): Promise<[{}]> {
+        return this._ipcCall('loadCheckpoints');
     }
 }
