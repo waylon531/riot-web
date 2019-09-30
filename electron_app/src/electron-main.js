@@ -88,7 +88,7 @@ try {
 const eventStorePath = path.join(app.getPath('userData'), 'events-store');
 const store = new Store({ name: "electron-config" });
 
-let eventStore = null;
+let eventIndex = null;
 
 let mainWindow = null;
 global.appQuitting = false;
@@ -206,19 +206,19 @@ ipcMain.on('ipcCall', async function(ev, payload) {
         case 'getConfig':
             ret = vectorConfig;
             break;
+
         case 'initEventIndex':
-            console.log("HELLLO INIT EVENT INDEXER");
             console.log(args[0]);
             // TODO this may be called multiple times with differing users
             // remember the last user and init a new store if they differ
-            if (args[0] && eventStore == null) {
-              let p = path.normalize(path.join(eventStorePath, args[0]));
-              await makeDir(p);
+            if (args[0] && eventIndex == null) {
+                let p = path.normalize(path.join(eventStorePath, args[0]));
+                await makeDir(p);
 
-              eventStore = new seshat(p);
+                eventIndex = new seshat(p);
 
-              console.log("Initialized event store");
-              console.log(eventStore);
+                console.log("Initialized event store");
+                console.log(eventIndex);
             }
             break;
         case 'addEventToIndex':
@@ -237,23 +237,23 @@ ipcMain.on('ipcCall', async function(ev, payload) {
             break;
         case 'searchEventIndex':
             console.log("Got search request", args[0]);
-            ret = await eventStore.search(args[0]);
+            ret = await eventIndex.search(args[0]);
             break;
 
-        case 'addBacklogEvents':
-            ret = await eventStore.addBacklogEvents(args[0], args[1], args[2]);
+        case 'addHistoricEvents':
+            ret = await eventIndex.addHistoricEvents(args[0], args[1], args[2]);
             break;
 
-        case 'removeBacklogCheckpoint':
-            ret = await eventStore.removeBacklogCheckpoint(args[0]);
+        case 'removeCrawlerCheckpoint':
+            ret = await eventIndex.removeCrawlerCheckpoint(args[0]);
             break;
 
-        case 'addBacklogCheckpoint':
-            ret = await eventStore.addBacklogCheckpoint(args[0]);
+        case 'addCrawlerCheckpoint':
+            ret = await eventIndex.addCrawlerCheckpoint(args[0]);
             break;
 
         case 'loadCheckpoints':
-            ret = await eventStore.loadCheckpoints();
+            ret = await eventIndex.loadCheckpoints();
             break;
 
         default:

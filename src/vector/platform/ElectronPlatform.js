@@ -294,7 +294,7 @@ export default class ElectronPlatform extends VectorBasePlatform {
         }
     }
 
-    async initEventIndex(user_id: string) {
+    async initEventIndex(user_id: string): void {
         return this._ipcCall('initEventIndex', user_id);
     }
 
@@ -306,17 +306,17 @@ export default class ElectronPlatform extends VectorBasePlatform {
         return this._ipcCall('searchEventIndex', term);
     }
 
-    async addBacklogEvents(events: string, checkpoint = null, oldCheckpoint = null): Promise<{}> {
+    async addHistoricEvents(events: string, checkpoint = null, oldCheckpoint = null): Promise<{}> {
         console.log("Adding events", events, checkpoint, oldCheckpoint);
-        return this._ipcCall('addBacklogEvents', events, checkpoint, oldCheckpoint);
+        return this._ipcCall('addHistoricEvents', events, checkpoint, oldCheckpoint);
     }
 
-    async addBacklogCheckpoint(checkpoint: {}): Promise<{}> {
-        return this._ipcCall('addBacklogCheckpoint', checkpoint);
+    async addCrawlerCheckpoint(checkpoint: {}): Promise<{}> {
+        return this._ipcCall('addCrawlerCheckpoint', checkpoint);
     }
 
-    async removeBacklogCheckpoint(checkpoint: {}): Promise<{}> {
-        return this._ipcCall('removeBacklogCheckpoint', checkpoint);
+    async removeCrawlerCheckpoint(checkpoint: {}): Promise<{}> {
+        return this._ipcCall('removeCrawlerCheckpoint', checkpoint);
     }
 
     async loadCheckpoints(checkpoint: {}): Promise<[{}]> {
