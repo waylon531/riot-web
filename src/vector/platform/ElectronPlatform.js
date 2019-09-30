@@ -306,6 +306,10 @@ export default class ElectronPlatform extends VectorBasePlatform {
         return this._ipcCall('isEventIndexEmpty');
     }
 
+    async commitLiveEvents(): Promise<{}> {
+        return this._ipcCall('commitLiveEvents');
+    }
+
     async searchEventIndex(term: string): Promise<{}> {
         return this._ipcCall('searchEventIndex', term);
     }

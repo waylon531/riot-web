@@ -237,9 +237,12 @@ ipcMain.on('ipcCall', async function(ev, payload) {
             catch (e) {
                 console.log("Not adding event to store", e, args[0]);
             }
-            // TODO don't commit on every addition.
-            await eventStore.commit();
             break;
+
+        case 'commitLiveEvents':
+            ret = await eventIndex.commit();
+            break;
+
         case 'searchEventIndex':
             console.log("Got search request", args[0]);
             ret = await eventIndex.search(args[0]);
