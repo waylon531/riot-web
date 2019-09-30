@@ -315,7 +315,6 @@ export default class ElectronPlatform extends VectorBasePlatform {
     }
 
     async addHistoricEvents(events: string, checkpoint = null, oldCheckpoint = null): Promise<{}> {
-        console.log("Adding events", events, checkpoint, oldCheckpoint);
         return this._ipcCall('addHistoricEvents', events, checkpoint, oldCheckpoint);
     }
 

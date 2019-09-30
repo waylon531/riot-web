@@ -208,7 +208,6 @@ ipcMain.on('ipcCall', async function(ev, payload) {
             break;
 
         case 'initEventIndex':
-            console.log(args[0]);
             // TODO this may be called multiple times with differing users
             // remember the last user and init a new store if they differ
             if (args[0] && eventIndex == null) {
@@ -216,9 +215,7 @@ ipcMain.on('ipcCall', async function(ev, payload) {
                 await makeDir(p);
 
                 eventIndex = new seshat(p);
-
                 console.log("Initialized event store");
-                console.log(eventIndex);
             }
             break;
 
@@ -231,8 +228,7 @@ ipcMain.on('ipcCall', async function(ev, payload) {
             // TODO get the profile as well
             // TODO catch errors
             try {
-                eventStore.addEvent(args[0]);
-                // console.log("Added event to the indexer", args[0]);
+                eventIndex.addEvent(args[0]);
             }
             catch (e) {
                 console.log("Not adding event to store", e, args[0]);
