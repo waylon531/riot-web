@@ -221,6 +221,11 @@ ipcMain.on('ipcCall', async function(ev, payload) {
                 console.log(eventIndex);
             }
             break;
+
+        case 'isEventIndexEmpty':
+            ret = await eventIndex.isEmpty();
+            break;
+
         case 'addEventToIndex':
             // TODO check that we have the event store initialized.
             // TODO get the profile as well
