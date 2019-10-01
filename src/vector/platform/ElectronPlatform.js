@@ -298,8 +298,8 @@ export default class ElectronPlatform extends VectorBasePlatform {
         return this._ipcCall('initEventIndex', user_id);
     }
 
-    async addEventToIndex(ev: object) {
-        return this._ipcCall('addEventToIndex', ev);
+    async addEventToIndex(ev: {}, profile: {}) {
+        return this._ipcCall('addEventToIndex', ev, profile);
     }
 
     async isEventIndexEmpty(): Promise<boolean> {
