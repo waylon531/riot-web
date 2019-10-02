@@ -288,6 +288,10 @@ export default class ElectronPlatform extends VectorBasePlatform {
         return this._ipcCall('initEventIndex', user_id);
     }
 
+    supportsEventIndexing(): boolean {
+        return true
+    }
+
     async addEventToIndex(ev: {}, profile: {}) {
         return this._ipcCall('addEventToIndex', ev, profile);
     }
