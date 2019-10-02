@@ -228,7 +228,7 @@ ipcMain.on('ipcCall', async function(ev, payload) {
             // TODO get the profile as well
             // TODO catch errors
             try {
-                eventIndex.addEvent(args[0]);
+                eventIndex.addEvent(args[0], args[1]);
             }
             catch (e) {
                 console.log("Not adding event to store", e, args[0]);
