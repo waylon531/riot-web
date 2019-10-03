@@ -208,9 +208,7 @@ ipcMain.on('ipcCall', async function(ev, payload) {
             break;
 
         case 'initEventIndex':
-            // TODO this may be called multiple times with differing users
-            // remember the last user and init a new store if they differ
-            if (args[0] && eventIndex == null) {
+            if (args[0] && eventIndex === null) {
                 let p = path.normalize(path.join(eventStorePath, args[0]));
                 await makeDir(p);
 
@@ -219,14 +217,15 @@ ipcMain.on('ipcCall', async function(ev, payload) {
             }
             break;
 
+        case 'deleteEventIndex':
+            await eventIndex.delete();
+            eventIndex = null;
+
         case 'isEventIndexEmpty':
             ret = await eventIndex.isEmpty();
             break;
 
         case 'addEventToIndex':
-            // TODO check that we have the event store initialized.
-            // TODO get the profile as well
-            // TODO catch errors
             try {
                 eventIndex.addEvent(args[0], args[1]);
             }
