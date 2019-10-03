@@ -333,4 +333,8 @@ export default class ElectronPlatform extends VectorBasePlatform {
     async loadCheckpoints(checkpoint: {}): Promise<[{}]> {
         return this._ipcCall('loadCheckpoints');
     }
+
+    async deleteEventIndex(): Promise<> {
+        return this._ipcCall('deleteEventIndex');
+    }
 }
