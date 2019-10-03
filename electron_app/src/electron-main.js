@@ -222,7 +222,8 @@ ipcMain.on('ipcCall', async function(ev, payload) {
             eventIndex = null;
 
         case 'isEventIndexEmpty':
-            ret = await eventIndex.isEmpty();
+            if (eventIndex === null) ret = true;
+            else ret = await eventIndex.isEmpty();
             break;
 
         case 'addEventToIndex':
@@ -239,7 +240,6 @@ ipcMain.on('ipcCall', async function(ev, payload) {
             break;
 
         case 'searchEventIndex':
-            console.log("Got search request", args[0]);
             ret = await eventIndex.search(args[0]);
             break;
 
