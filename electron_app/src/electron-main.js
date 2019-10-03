@@ -85,7 +85,7 @@ try {
 }
 
 
-const eventStorePath = path.join(app.getPath('userData'), 'events-store');
+const eventStorePath = path.join(app.getPath('userData'), 'EventStore');
 const store = new Store({ name: "electron-config" });
 
 let eventIndex = null;
