@@ -155,6 +155,17 @@ autoUpdater.on('update-downloaded', (ev, releaseNotes, releaseName, releaseDate,
 ipcMain.on('ipcCall', async function(ev, payload) {
     if (!mainWindow) return;
 
+    const send_error = (id, e) => {
+        const error = {
+            message: e.message
+        }
+
+        mainWindow.webContents.send('ipcReply', {
+            id:id,
+            error: error
+        });
+    }
+
     const args = payload.args || [];
     let ret;
 
@@ -210,10 +221,14 @@ ipcMain.on('ipcCall', async function(ev, payload) {
         case 'initEventIndex':
             if (args[0] && eventIndex === null) {
                 let p = path.normalize(path.join(eventStorePath, args[0]));
-                await makeDir(p);
-
-                eventIndex = new seshat(p);
-                console.log("Initialized event store");
+                try {
+                    await makeDir(p);
+                    eventIndex = new seshat(p);
+                    console.log("Initialized event store");
+                } catch (e) {
+                    send_error(payload.id, e);
+                    return;
+                }
             }
             break;
 
@@ -229,34 +244,76 @@ ipcMain.on('ipcCall', async function(ev, payload) {
         case 'addEventToIndex':
             try {
                 eventIndex.addEvent(args[0], args[1]);
-            }
-            catch (e) {
-                console.log("Not adding event to store", e, args[0]);
+            } catch (e) {
+                send_error(payload.id, e);
+                return;
             }
             break;
 
         case 'commitLiveEvents':
-            ret = await eventIndex.commit();
+            try {
+                ret = await eventIndex.commit();
+            } catch (e) {
+                send_error(payload.id, e);
+                return;
+            }
             break;
 
         case 'searchEventIndex':
-            ret = await eventIndex.search(args[0]);
+            try {
+                ret = await eventIndex.search(args[0]);
+            } catch (e) {
+                send_error(payload.id, e);
+                return;
+            }
             break;
 
         case 'addHistoricEvents':
-            ret = await eventIndex.addHistoricEvents(args[0], args[1], args[2]);
+            if (eventIndex === null) ret = false;
+            else {
+                try {
+                    ret = await eventIndex.addHistoricEvents(
+                        args[0], args[1], args[2]);
+                } catch (e) {
+                    send_error(payload.id, e);
+                    return;
+                }
+            }
             break;
 
         case 'removeCrawlerCheckpoint':
-            ret = await eventIndex.removeCrawlerCheckpoint(args[0]);
+            if (eventIndex === null) ret = false;
+            else {
+                try {
+                    ret = await eventIndex.removeCrawlerCheckpoint(args[0]);
+                } catch (e) {
+                    send_error(payload.id, e);
+                    return;
+                }
+            }
             break;
 
         case 'addCrawlerCheckpoint':
-            ret = await eventIndex.addCrawlerCheckpoint(args[0]);
+            if (eventIndex === null) ret = false;
+            else {
+                try {
+                    ret = await eventIndex.addCrawlerCheckpoint(args[0]);
+                } catch (e) {
+                    send_error(payload.id, e);
+                    return;
+                }
+            }
             break;
 
         case 'loadCheckpoints':
-            ret = await eventIndex.loadCheckpoints();
+            if (eventIndex === null) ret = [];
+            else {
+                try {
+                    ret = await eventIndex.loadCheckpoints();
+                } catch (e) {
+                    ret = [];
+                }
+            }
             break;
 
         default:
